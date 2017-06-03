@@ -1,9 +1,13 @@
-package com.abc;
+package com.abc.domain.objects;
+
+import static java.lang.Math.abs;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static java.lang.Math.abs;
+import com.abc.domain.constants.TransferState;
+import com.abc.domain.exceptions.BusinessException;
+import com.abc.domain.exceptions.InvalidTransactionException;
 
 public class Customer {
     private String name;
@@ -27,7 +31,7 @@ public class Customer {
         return accounts.size();
     }
 
-    public double totalInterestEarned() {
+    public double totalInterestEarned() throws BusinessException {
         double total = 0;
         for (Account a : accounts)
             total += a.interestEarned();
@@ -51,22 +55,22 @@ public class Customer {
 
        //Translate to pretty account type
         switch(a.getAccountType()){
-            case Account.CHECKING:
+            case CHECKING:
                 s += "Checking Account\n";
                 break;
-            case Account.SAVINGS:
+            case SAVINGS:
                 s += "Savings Account\n";
                 break;
-            case Account.MAXI_SAVINGS:
+            case MAXI_SAVINGS:
                 s += "Maxi Savings Account\n";
                 break;
         }
 
         //Now total up all the transactions
         double total = 0.0;
-        for (Transaction t : a.transactions) {
-            s += "  " + (t.amount < 0 ? "withdrawal" : "deposit") + " " + toDollars(t.amount) + "\n";
-            total += t.amount;
+        for (Transaction t : a.getTransactions()) {
+            s += "  " + (t.getAmount() < 0 ? "withdrawal" : "deposit") + " " + toDollars(t.getAmount()) + "\n";
+            total += t.getAmount();
         }
         s += "Total " + toDollars(total);
         return s;
@@ -75,4 +79,27 @@ public class Customer {
     private String toDollars(double d){
         return String.format("$%,.2f", abs(d));
     }
+
+	public void transfer(Account accountFrom, Account accountTo, double amount) throws BusinessException {
+		if (accountFrom.equals(accountTo)){
+			throw new InvalidTransactionException("Cannot transfer to itself");
+		}
+		if (accountFrom.sumTransactions()<amount){
+			throw new InvalidTransactionException("Cannot transfer more then current amount");			
+		}
+		
+		TransferState transferState=TransferState.INITIAL;
+		try{
+			accountFrom.withdraw(amount);
+			transferState=TransferState.WITHDRAWN_COMPLETE;
+			accountTo.deposit(amount);
+		}
+		// compensate withdraw if deposit fail
+		catch(Exception exception){
+			if (TransferState.WITHDRAWN_COMPLETE.equals(transferState)){
+				accountFrom.deposit(amount);
+			}
+			throw exception;
+		}
+	}
 }
