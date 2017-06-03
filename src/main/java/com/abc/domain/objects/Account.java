@@ -8,11 +8,9 @@ import com.abc.domain.constants.AccountType;
 import com.abc.domain.exceptions.BusinessException;
 import com.abc.domain.exceptions.InvalidTransactionException;
 import com.abc.util.DateProvider;
-import com.abc.util.impl.DateProviderImpl;
 
 public class Account {
 
-	private static final int DAY = 24*3600*1000;
 	private final AccountType accountType;
 	private final List<Transaction> transactions;
 	private final DateProvider dateProvider;
@@ -37,16 +35,6 @@ public class Account {
 		} else {
 			transactions.add(new Transaction(-amount, dateProvider));
 		}
-	}
-	public boolean lastTransactionIn(int days) {
-		long startOfDay = (dateProvider.now().getTime()/DAY)*DAY;
-		Date daysAgo = new Date(startOfDay-days*DAY);
-		for (Transaction t:transactions){
-			if (t.getTransactionDate().after(daysAgo)){
-				return true;
-			}
-		}
-		return false;
 	}
 	public double interestEarned() {
 		double amount = sumTransactions();
