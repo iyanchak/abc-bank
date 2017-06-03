@@ -46,4 +46,9 @@ public class Bank {
     	  }
     	  throw new InvalidCustomerException("No customers yet");
     }
+
+	@Override
+	public String toString() {
+		return "Bank [customers=" + customers + "]";
+	}
 }

@@ -34,7 +34,7 @@ public class Customer {
     public double totalInterestEarned() throws BusinessException {
         double total = 0;
         for (Account a : accounts)
-            total += a.interestEarned();
+            total += a.calculateInterestEarned();
         return total;
     }
 
@@ -79,13 +79,23 @@ public class Customer {
     private String toDollars(double d){
         return String.format("$%,.2f", abs(d));
     }
+    
+    //Check whether account belongs to customer
+    private void checkAccountOwnership (Account account) throws InvalidTransactionException{
+    	if (!accounts.contains(account)){
+			throw new InvalidTransactionException("account is not owned by customer: "+account);
+    	}
+    }
 
 	public void transfer(Account accountFrom, Account accountTo, double amount) throws BusinessException {
+		checkAccountOwnership(accountFrom);
+		checkAccountOwnership(accountTo);
+		
 		if (accountFrom.equals(accountTo)){
-			throw new InvalidTransactionException("Cannot transfer to itself");
+			throw new InvalidTransactionException("Cannot transfer to the same account");
 		}
 		if (accountFrom.sumTransactions()<amount){
-			throw new InvalidTransactionException("Cannot transfer more then current amount");			
+			throw new InvalidTransactionException("Cannot transfer more then current amount"+amount);			
 		}
 		
 		TransferState transferState=TransferState.INITIAL;

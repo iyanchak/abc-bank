@@ -1,25 +1,40 @@
 package com.abc.domain.objects;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
+import java.time.LocalDateTime;
+
+import org.junit.Before;
 import org.junit.Test;
 
 import com.abc.domain.constants.AccountType;
 import com.abc.domain.constants.Precision;
 import com.abc.domain.exceptions.BusinessException;
 import com.abc.domain.exceptions.InvalidCustomerException;
-import com.abc.domain.objects.Account;
-import com.abc.domain.objects.Bank;
-import com.abc.domain.objects.Customer;
-import com.abc.util.impl.DateProviderImpl;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import com.abc.domain.util.impl.DateTestHelperImpl;
+import com.abc.util.DateTimeProvider;
+import com.abc.util.impl.DateTimeProviderImpl;
 
 public class BankTest {
+	private DateTimeProvider dateTimeProvider365DaysAgo;
+
+	@Before
+	public void setup(){
+		dateTimeProvider365DaysAgo=new DateTimeProvider(){
+			int counter=0;
+			public LocalDateTime now() {
+				LocalDateTime date=new DateTestHelperImpl().getMultiDaysAgoOrNowBasedOnCounter(counter,new long[] {365});
+				counter++;
+				return date;
+			}
+    	};
+	}
     @Test
     public void testCustomerSummary() throws BusinessException {
         Bank bank = new Bank();
         Customer john = new Customer("John");
-        john.openAccount(new Account(AccountType.CHECKING,DateProviderImpl.INSTANCE));
+        john.openAccount(new Account(AccountType.CHECKING,dateTimeProvider365DaysAgo));
         bank.addCustomer(john);
 
         assertEquals("Customer Summary\n - John (1 account)", bank.customerSummary());
@@ -28,7 +43,7 @@ public class BankTest {
     @Test
     public void testCheckingAccount() throws BusinessException {
         Bank bank = new Bank();
-        Account checkingAccount = new Account(AccountType.CHECKING,DateProviderImpl.INSTANCE);
+        Account checkingAccount = new Account(AccountType.CHECKING,dateTimeProvider365DaysAgo);
         Customer bill = new Customer("Bill").openAccount(checkingAccount);
         bank.addCustomer(bill);
 
@@ -40,7 +55,7 @@ public class BankTest {
     @Test
     public void testSavingsAccount() throws BusinessException {
         Bank bank = new Bank();
-        Account savingsAccount = new Account(AccountType.SAVINGS,DateProviderImpl.INSTANCE);
+        Account savingsAccount = new Account(AccountType.SAVINGS,dateTimeProvider365DaysAgo);
         bank.addCustomer(new Customer("Bill").openAccount(savingsAccount));
 
         savingsAccount.deposit(1500.0);
@@ -51,7 +66,7 @@ public class BankTest {
     @Test
     public void testMaxiSavingsAccount() throws BusinessException {
         Bank bank = new Bank();
-        Account maxiSavingsAccount = new Account(AccountType.MAXI_SAVINGS,DateProviderImpl.INSTANCE);
+        Account maxiSavingsAccount = new Account(AccountType.MAXI_SAVINGS,dateTimeProvider365DaysAgo);
         bank.addCustomer(new Customer("Bill").openAccount(maxiSavingsAccount));
 
         maxiSavingsAccount.deposit(3000.0);
@@ -75,7 +90,7 @@ public class BankTest {
     //Test that retrieval of first customer name succeeds if there is one customer
     public void testGetFirstCustomerNameOneCustomer() throws BusinessException{
         Bank bank = new Bank();
-        Account checkingAccount = new Account(AccountType.CHECKING,DateProviderImpl.INSTANCE);
+        Account checkingAccount = new Account(AccountType.CHECKING,dateTimeProvider365DaysAgo);
         Customer george = new Customer("George").openAccount(checkingAccount);
         bank.addCustomer(george);
         assertEquals("George",bank.getFirstCustomerName());
@@ -85,11 +100,11 @@ public class BankTest {
     //Test that first customer remains the same when second customer is added
     public void testGetFirstCustomerNameRemainsTheSameWhenSecond() throws BusinessException{
         Bank bank = new Bank();
-        Account georgeCheckingAccount = new Account(AccountType.CHECKING,DateProviderImpl.INSTANCE);
+        Account georgeCheckingAccount = new Account(AccountType.CHECKING,dateTimeProvider365DaysAgo);
         Customer george = new Customer("George").openAccount(georgeCheckingAccount);
         bank.addCustomer(george);
         
-        Account karenSavingsAccount = new Account(AccountType.SAVINGS,DateProviderImpl.INSTANCE);
+        Account karenSavingsAccount = new Account(AccountType.SAVINGS,dateTimeProvider365DaysAgo);
         Customer karen = new Customer("Karen").openAccount(karenSavingsAccount);
         bank.addCustomer(karen);
         

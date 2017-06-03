@@ -1,19 +1,20 @@
 package com.abc.domain.objects;
 
-import java.util.Date;
 
-import com.abc.util.DateProvider;
+import java.time.LocalDateTime;
+
+import com.abc.util.DateTimeProvider;
 
 public class Transaction {
     private final double amount;
-    private final Date transactionDate;
+    private final LocalDateTime transactionDate;
 
-    public Transaction(double amount,DateProvider dateProvider) {
+    public Transaction(double amount,DateTimeProvider dateTimeProvider) {
         this.amount = amount;
-        transactionDate=dateProvider.now();
+        transactionDate=dateTimeProvider.now();
     }
 
-	public Date getTransactionDate() {
+	public LocalDateTime getTransactionDate() {
 		return transactionDate;
 	}
 

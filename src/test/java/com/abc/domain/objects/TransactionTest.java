@@ -1,21 +1,20 @@
 package com.abc.domain.objects;
 
+import static org.junit.Assert.assertEquals;
+
+import java.time.LocalDateTime;
+
 import org.junit.Test;
 
 import com.abc.domain.constants.Precision;
-import com.abc.domain.objects.Transaction;
-import com.abc.util.DateProvider;
-
-import static org.junit.Assert.assertEquals;
-
-import java.util.Date;
+import com.abc.util.DateTimeProvider;
 
 public class TransactionTest {
     @Test
     public void testTransaction() {
-    	final Date date=new Date();
-    	DateProvider dt=new DateProvider(){
-			public Date now() {
+    	final LocalDateTime date=LocalDateTime.now();
+    	DateTimeProvider dt=new DateTimeProvider(){
+			public LocalDateTime now() {
 				return date;
 			}
     	};
