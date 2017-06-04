@@ -13,13 +13,14 @@ import com.abc.util.impl.DateTimeProviderImpl;
 
 /**
  * Class to test date time provider
+ * 
  * @author Ihor
  */
 public class DateTimeProviderImplTest {
-	//Test that now from date time provider is not before current time
+	// Test that now from date time provider is not before current time
 	@Test
-	public void testNow(){
-		LocalDateTime now = DateTimeProviderImpl.INSTANCE.now(); 
+	public void testNow() {
+		LocalDateTime now = DateTimeProviderImpl.INSTANCE.now();
 		assertFalse(LocalDateTime.now().isBefore(now));
 	}
 }
