@@ -14,8 +14,12 @@ import com.abc.domain.exceptions.BusinessException;
 import com.abc.domain.exceptions.InvalidCustomerException;
 import com.abc.domain.util.impl.DateTestHelperImpl;
 import com.abc.util.DateTimeProvider;
-import com.abc.util.impl.DateTimeProviderImpl;
 
+/**
+ * Class to test bank domain object.
+ * @author Ihor
+ *
+ */
 public class BankTest {
 	private DateTimeProvider dateTimeProvider365DaysAgo;
 
@@ -30,6 +34,7 @@ public class BankTest {
 			}
     	};
 	}
+	//Test that customer summaery is generate correctly
     @Test
     public void testCustomerSummary() throws BusinessException {
         Bank bank = new Bank();
@@ -37,9 +42,10 @@ public class BankTest {
         john.openAccount(new Account(AccountType.CHECKING,dateTimeProvider365DaysAgo));
         bank.addCustomer(john);
 
-        assertEquals("Customer Summary\n - John (1 account)", bank.customerSummary());
+        assertEquals("Customer Summary\n - John (1 account)", bank.generateCustomerSummary());
     }
 
+	//Test that opening and depositing to checking account works correctly    
     @Test
     public void testCheckingAccount() throws BusinessException {
         Bank bank = new Bank();
@@ -51,7 +57,8 @@ public class BankTest {
 
         assertEquals(0.1, bank.totalInterestPaid(), Precision.DOUBLE_PRECISION);
     }
-
+    
+	//Test that opening and depositing to savings account works correctly    
     @Test
     public void testSavingsAccount() throws BusinessException {
         Bank bank = new Bank();
@@ -63,6 +70,7 @@ public class BankTest {
         assertEquals(2.0, bank.totalInterestPaid(), Precision.DOUBLE_PRECISION);
     }
 
+	//Test that opening and depositing to maxi savings account works correctly        
     @Test
     public void testMaxiSavingsAccount() throws BusinessException {
         Bank bank = new Bank();
@@ -73,6 +81,7 @@ public class BankTest {
 
         assertEquals(170.0, bank.totalInterestPaid(), Precision.DOUBLE_PRECISION);
     }
+    
     @Test
     //Test that retrieval of first customer name gives error if no customers yet
     public void testGetFirstCustomerNameEmpty(){
@@ -86,8 +95,8 @@ public class BankTest {
         }
     }
 
-    @Test
     //Test that retrieval of first customer name succeeds if there is one customer
+    @Test
     public void testGetFirstCustomerNameOneCustomer() throws BusinessException{
         Bank bank = new Bank();
         Account checkingAccount = new Account(AccountType.CHECKING,dateTimeProvider365DaysAgo);
@@ -95,9 +104,9 @@ public class BankTest {
         bank.addCustomer(george);
         assertEquals("George",bank.getFirstCustomerName());
     }
-    
+
+    //Test that first customer remains the same when second customer is added    
     @Test
-    //Test that first customer remains the same when second customer is added
     public void testGetFirstCustomerNameRemainsTheSameWhenSecond() throws BusinessException{
         Bank bank = new Bank();
         Account georgeCheckingAccount = new Account(AccountType.CHECKING,dateTimeProvider365DaysAgo);

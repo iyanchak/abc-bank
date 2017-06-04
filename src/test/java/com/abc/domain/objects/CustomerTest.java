@@ -13,10 +13,15 @@ import com.abc.domain.exceptions.BusinessException;
 import com.abc.domain.exceptions.InvalidTransactionException;
 import com.abc.util.DateTimeProvider;
 import com.abc.util.impl.DateTimeProviderImpl;
-
+/**
+ * Class to test customer domain object
+ * @author Ihor
+ *
+ */
 public class CustomerTest {
 
-    @Test //Test customer statement generation
+	//Test customer statement generation
+    @Test 
     public void testStatementGeneration() throws BusinessException{
 
         Account checkingAccount = new Account(AccountType.CHECKING,DateTimeProviderImpl.INSTANCE);
@@ -42,12 +47,14 @@ public class CustomerTest {
                 "Total In All Accounts $3,900.00", henry.getStatement());
     }
 
+    //Test opening of one savings account
     @Test
     public void testOneAccount(){
         Customer oscar = new Customer("Oscar").openAccount(new Account(AccountType.SAVINGS,DateTimeProviderImpl.INSTANCE));
         assertEquals(1, oscar.getNumberOfAccounts());
     }
 
+    //Test opening of savings and checking accounts    
     @Test
     public void testTwoAccount(){
         Customer oscar = new Customer("Oscar")
@@ -56,6 +63,7 @@ public class CustomerTest {
         assertEquals(2, oscar.getNumberOfAccounts());
     }
 
+  //Test opening of savings, checking and maxi savings accounts
     @Test
     public void testThreeAcounts() {
         Customer oscar = new Customer("Oscar")
@@ -66,7 +74,7 @@ public class CustomerTest {
     }
     
     @Test
-    //Test transfer complete checking account to savings
+    //Test transfer complete amount from checking account to savings
     public void testAccountTransferCompleteAmount() throws BusinessException{
         Account checkingAccount = new Account(AccountType.CHECKING,DateTimeProviderImpl.INSTANCE);
         Account savingsAccount = new Account(AccountType.SAVINGS,DateTimeProviderImpl.INSTANCE);
@@ -80,9 +88,9 @@ public class CustomerTest {
         assertEquals(checkingAccount.sumTransactions(),0.0,Precision.DOUBLE_PRECISION);
         assertEquals(savingsAccount.sumTransactions(),3500.0,Precision.DOUBLE_PRECISION);
     }
-    
+
+    //Test attempt to transfer over amount in checking to savings        
     @Test
-    //Test attempt to transfer over amount in checking to savings    
     public void testAccountTransferOverAmountInAccount() throws BusinessException{
         Account checkingAccount = new Account(AccountType.CHECKING,DateTimeProviderImpl.INSTANCE);
         Account savingsAccount = new Account(AccountType.SAVINGS,DateTimeProviderImpl.INSTANCE);
@@ -100,8 +108,8 @@ public class CustomerTest {
         }
     }
 
+    //Test attempt to transfer negative in checking to savings        
     @Test
-    //Test attempt to transfer negative in checking to savings    
     public void testAccountTransferNegativeAmountAccount() throws BusinessException{
         Account checkingAccount = new Account(AccountType.CHECKING,DateTimeProviderImpl.INSTANCE);
         Account savingsAccount = new Account(AccountType.SAVINGS,DateTimeProviderImpl.INSTANCE);
@@ -118,8 +126,9 @@ public class CustomerTest {
         	//Expected
         }
     }
+    
+    //Test attempt to transfer from maxi savings to itself    
     @Test
-    //Test attempt to transfer from maxiSaving to itself
     public void testAccountTransferAccountToItself() throws BusinessException{
         Account maxiSavingAccount = new Account(AccountType.MAXI_SAVINGS,DateTimeProviderImpl.INSTANCE);
 
@@ -134,8 +143,9 @@ public class CustomerTest {
         	//Expected
         }
     }
+    
+    //Test attempt to transfer from savings to checking when deposit fails    
     @Test
-    //Test attempt to transfer from savings to checking when deposit fails
     public void testAccountTransferWhenDepositFails() throws BusinessException{
         Account savingsAccount = new Account(AccountType.SAVINGS,DateTimeProviderImpl.INSTANCE);
     	DateTimeProvider dt=new DateTimeProvider(){
@@ -160,8 +170,8 @@ public class CustomerTest {
         
     }
 
+    //Test attempt to transfer from account not owned by customer    
     @Test
-    //Test attempt to transfer from account not owned by customer
     public void testAccountTransferWhenFromAccountIsNotOwnedByCustomer() throws BusinessException{
         Account bobSavingsAccount = new Account(AccountType.SAVINGS,DateTimeProviderImpl.INSTANCE);
         Account bobMaxiSavingsAccount = new Account(AccountType.MAXI_SAVINGS,DateTimeProviderImpl.INSTANCE);
@@ -180,8 +190,9 @@ public class CustomerTest {
         assertEquals(100.0,bobSavingsAccount.sumTransactions(),Precision.DOUBLE_PRECISION);
         assertEquals(2000.0,aliceCheckingAccount.sumTransactions(),Precision.DOUBLE_PRECISION);
     }
+
+    //Test attempt to transfer to account not owned by customer    
     @Test
-    //Test attempt to transfer to account not owned by customer
     public void testAccountTransferWhenToAccountIsNotOwnedByCustomer() throws BusinessException{
         Account bobSavingsAccount = new Account(AccountType.SAVINGS,DateTimeProviderImpl.INSTANCE);
         Account bobMaxiSavingsAccount = new Account(AccountType.MAXI_SAVINGS,DateTimeProviderImpl.INSTANCE);
