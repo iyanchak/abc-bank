@@ -78,14 +78,15 @@ public class Customer {
 	 * @return Statement
 	 */
 	public String getStatement() {
-		String statement = "Statement for " + name + "\n";
+		StringBuilder statement = new StringBuilder();
+		statement.append("Statement for " + name + "\n");
 		double total = 0.0;
 		for (Account a : accounts) {
-			statement += "\n" + getStatementForAccount(a) + "\n";
+			statement.append("\n" + getStatementForAccount(a) + "\n");
 			total += a.sumTransactions();
 		}
-		statement += "\nTotal In All Accounts " + formatToDollars(total);
-		return statement;
+		statement.append("\nTotal In All Accounts " + formatToDollars(total));
+		return statement.toString();
 	}
 
 	/**
